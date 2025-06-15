@@ -14,7 +14,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U carnival_user -d carnival"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-user} -d ${DB_NAME:-carnival}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -109,11 +109,11 @@ services:
     env_file:
       - .env
     environment:
-      - NEXT_PUBLIC_BASE_URL=http://localhost:4000
-      - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
-      - NEXT_PUBLIC_GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URI:-}
-      - NEXT_PUBLIC_SLACK_CLIENT_ID=${SLACK_CLIENT_ID:-}
-      - NEXT_PUBLIC_SLACK_REDIRECT_URL=${SLACK_REDIRECT_URI:-}
+      - SERVER_URL=http://localhost:4000
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL}
+      - SLACK_CLIENT_ID=${SLACK_CLIENT_ID}
+      - SLACK_REDIRECT_URL=${SLACK_REDIRECT_URI}
     ports:
       - "3000:3000"
     depends_on:
@@ -134,7 +134,7 @@ services:
       - DB_PORT=${DB_PORT:-5432}
       - DB_NAME=${DB_NAME:-carnival}
       - FRONTEND_APP_URL=http://localhost:3000
-      - VECTOR_SERVER_URL=http://localhost:4001
+      - VECTOR_SERVER_URL=http://carnival-vector-server:4001
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - SERVER_KEY=Gx18dL4pM2a
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
@@ -146,8 +146,8 @@ services:
       - INDEX_QUEUE=index_queue
       - ADD_VECTOR_ENTITY_QUEUE=add_vector_entity_queue
       - DELETE_VECTOR_ENTITY_QUEUE=delete_vector_entity_queue
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
       - DEFAULT_REINDEX_INTERVAL=${DEFAULT_REINDEX_INTERVAL:-}
     ports:
       - "4000:4000"
@@ -169,12 +169,14 @@ services:
       - PORT=4001
       - NODE_ENV=production
       - SERVER_KEY=Gx18dL4pM2a
-      - SERVER_URL=http://localhost:4000
+      - SERVER_URL=http://carnival-server:4000
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - MILVUS_URI=${MILVUS_URI}
       - MILVUS_TOKEN=${MILVUS_TOKEN}
       - ADD_VECTOR_ENTITY_QUEUE=add_vector_entity_queue
       - DELETE_VECTOR_ENTITY_QUEUE=delete_vector_entity_queue
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "4001:4001"
     depends_on:
@@ -184,15 +186,15 @@ services:
         condition: service_started
     restart: unless-stopped
 
-  carnival-bull-ui:
-    image: sakkshm1/carnival:bull-ui-latest
-    container_name: carnival-bull-ui
+  carnival-queue-ui:
+    image: sakkshm1/carnival:queue-ui-latest
+    container_name: carnival-queue-ui
     env_file:
       - .env
     environment:
       - PORT=4002
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
       - INDEX_QUEUE=index_queue
       - ADD_VECTOR_ENTITY_QUEUE=add_vector_entity_queue
       - DELETE_VECTOR_ENTITY_QUEUE=delete_vector_entity_queue

@@ -26,10 +26,10 @@ cp .env.example .env
 
 Edit the `.env` file and update the following required variables:
 
-- `BETTER_AUTH_SECRET`: Generate a strong random string for authentication
-- `OPENAI_API_KEY`: Your OpenAI API key for AI functionality
-- `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET`: Google OAuth credentials (optional)
-- `SLACK_CLIENT_ID` & `SLACK_CLIENT_SECRET`: Slack OAuth credentials (optional)
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `BETTER_AUTH_SECRET`: Generate a strong random string for authentication (Optional)
+- `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET`: Google OAuth credentials (Optional)
+- `SLACK_CLIENT_ID` & `SLACK_CLIENT_SECRET`: Slack OAuth credentials (Optional)
 
 ### 3. Start the Application
 
@@ -52,7 +52,7 @@ Once started, the following services will be available:
 - **Carnival Client** (http://localhost:3000) - Main web application
 - **Carnival Server** (http://localhost:4000) - Backend API server
 - **Vector Server** (http://localhost:4001) - Vector database operations
-- **Bull Queue UI** (http://localhost:4002) - Queue monitoring dashboard
+- **Queue UI** (http://localhost:4002/bullmq/queues) - Queue monitoring dashboard
 - **PgAdmin** (http://localhost:5050) - PostgreSQL database admin
 - **MinIO Console** (http://localhost:9001) - Object storage admin
 
@@ -75,6 +75,8 @@ Once started, the following services will be available:
 ### MinIO
 - Access Key: minioadmin
 - Secret Key: minioadmin
+
+All these credentials can be updated in the .env file.
 
 ## Health Checks
 
@@ -129,14 +131,6 @@ docker compose -f docker-compose.yml -p carnival-stack up -d --pull always --for
 
 All configurable options are available in the `.env` file.
 
-### OAuth Setup
-
-To enable Google or Slack authentication:
-
-1. Create OAuth applications in respective developer consoles
-2. Update the client ID, secret, and redirect URIs in your `.env` file
-3. Restart the services
-
 ## Development
 
-For development purposes, you can mount local directories and modify the docker-compose.yml file accordingly. The application logs are already mounted to `./logs` directory for easy access.
+For development purposes, you can mount local directories and modify the docker-compose.yml file accordingly. The application logs are already mounted to `./logs` directory.
